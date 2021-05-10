@@ -29,4 +29,9 @@ impl Vec3 {
     pub fn distance(&self, other: &Vec3) -> f64 {
         ((self.x - other.x).powi(2) + (self.y - other.y).powi(2) + (self.z - other.z).powi(2)).sqrt()
     }
+
+    pub fn unit(&self) -> Vec3 {
+        let divisor = (self.x.powi(2) + self.y.powi(2) + self.z.powi(2)).sqrt();
+        Vec3::new(self.x / divisor, self.y / divisor, self.z / divisor)
+    }
 }

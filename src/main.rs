@@ -20,20 +20,21 @@ const HEIGHT: usize = 1080;
 const VANTAGE_DISTANCE: f64 = 100.0;
 
 // Determines the quality of anti-aliasing.
-const AA_SCALE: usize = 4;
+// TODO: Currently the scaling needs fixing.
+const AA_SCALE: usize = 1;
 
 fn main() {
     let buffer_width = (WIDTH * AA_SCALE) as u32;
     let buffer_height = (HEIGHT * AA_SCALE) as u32;
     let mut image: RgbImage = ImageBuffer::new(buffer_width, buffer_height);
-    let origin = Vec3::new(0.0, 0.0, 0.0);
+    let origin = Vec3::new(0.0, 0.0, VANTAGE_DISTANCE);
     //let light = Vec3::new(0.0, 200.0, 50.0);
     let scene_objects = vec![
-        Sphere::new(Vec3::new(-200.0, 0.0, -50.0), 25),
-        Sphere::new(Vec3::new(-100.0, 0.0, -50.0), 25),
-        Sphere::new(Vec3::new(0.0, 0.0, -50.0), 25),
-        Sphere::new(Vec3::new(100.0, 0.0, -50.0), 25),
-        Sphere::new(Vec3::new(200.0, 0.0, -50.0), 25),
+        Sphere::new(Vec3::new(-200.0, 0.0, -25.0), 50),
+        Sphere::new(Vec3::new(-100.0, 0.0, -25.0), 50),
+        Sphere::new(Vec3::new(0.0, 0.0, -25.0), 50),
+        Sphere::new(Vec3::new(100.0, 0.0, -25.0), 50),
+        Sphere::new(Vec3::new(200.0, 0.0, -25.0), 50),
     ];
 
     for i in 0..buffer_height {
@@ -45,7 +46,7 @@ fn main() {
                     -((buffer_width / 2) as f64) + j as f64,
                     ((buffer_height / 2) as f64) - i as f64,
                     VANTAGE_DISTANCE
-                ),
+                ).unit(),
             );
             
             // Compute where the ray intersects objects in the scene.
