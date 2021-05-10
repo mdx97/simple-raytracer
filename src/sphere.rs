@@ -4,13 +4,13 @@ use super::vec3::Vec3;
 pub struct Sphere {
     pub center: Vec3,
     pub radius: u32,
+    pub color: (u8, u8, u8),
 }
 
 impl Sphere {
-    pub fn new(center: Vec3, radius: u32) -> Self {
-        Self { center, radius }
+    pub fn new(center: Vec3, radius: u32, color: (u8, u8, u8)) -> Self {
+        Self { center, radius, color }
     }
-
     pub fn intersection(&self, ray: &Ray) -> Option<Vec3> {
         let conn = ray.origin.minus(&self.center);
         let a = ray.direction.dot(&ray.direction);

@@ -24,6 +24,13 @@ const VANTAGE_DISTANCE: f64 = 200.0;
 // TODO: Currently the scaling needs fixing.
 const AA_SCALE: usize = 1;
 
+type Color = (u8, u8, u8);
+const WHITE: Color  = (255, 255, 255);
+const RED: Color    = (255, 0, 0);
+const GREEN: Color  = (0, 255, 0);
+const BLUE: Color   = (0, 0, 255);
+const YELLOW: Color = (255, 255, 0);
+
 struct Hit<'a> {
     pos: Vec3,
     object: &'a Sphere,
@@ -38,11 +45,11 @@ fn main() {
     let origin = Vec3::new(0.0, 0.0, VANTAGE_DISTANCE);
     let light = Vec3::new(0.0, 200.0, 50.0);
     let scene_objects = vec![
-        Sphere::new(Vec3::new(-200.0, 0.0, -25.0), 50),
-        Sphere::new(Vec3::new(-100.0, 0.0, -25.0), 50),
-        Sphere::new(Vec3::new(0.0, 0.0, -25.0), 50),
-        Sphere::new(Vec3::new(100.0, 0.0, -25.0), 50),
-        Sphere::new(Vec3::new(200.0, 0.0, -25.0), 50),
+        Sphere::new(Vec3::new(-200.0, 0.0, -25.0), 50, WHITE),
+        Sphere::new(Vec3::new(-100.0, 0.0, -25.0), 50, RED),
+        Sphere::new(Vec3::new(0.0, 0.0, -25.0), 50, GREEN),
+        Sphere::new(Vec3::new(100.0, 0.0, -25.0), 50, BLUE),
+        Sphere::new(Vec3::new(200.0, 0.0, -25.0), 50, YELLOW),
     ];
 
     for i in 0..buffer_height {
@@ -77,10 +84,11 @@ fn main() {
 
                 let surface_normal = closest.pos.minus(&closest.object.center).unit();
                 let lighting_coef = closest.pos.minus(&light).unit().dot(&surface_normal);
-
-                // TODO: Actually color based off of the object material.
-                let saturation = max((255.0 * lighting_coef) as u8, 10);
-                image.put_pixel(j as u32, i as u32, Rgb([saturation, saturation, saturation]));
+                image.put_pixel(j as u32, i as u32, Rgb([
+                    max((closest.object.color.0 as f64 * lighting_coef) as u8, 10),
+                    max((closest.object.color.1 as f64 * lighting_coef) as u8, 10),
+                    max((closest.object.color.2 as f64 * lighting_coef) as u8, 10),
+                ]));
             }
         }
     }
