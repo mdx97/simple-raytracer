@@ -83,7 +83,22 @@ fn main() {
                 }
 
                 let surface_normal = closest.pos.minus(&closest.object.center).unit();
-                let lighting_coef = closest.pos.minus(&light).unit().dot(&surface_normal);
+                let light_ray = Ray::new(closest.pos.clone(), closest.pos.minus(&light));
+                let mut shadow = false;
+
+                // for object in scene_objects.iter() {
+                //     if object != closest.object && object.intersection(&light_ray).is_some() {
+                //         shadow = true;
+                //         break;
+                //     }
+                // }
+
+                let lighting_coef = if !shadow {
+                    closest.pos.minus(&light).unit().dot(&surface_normal)
+                } else {
+                    0.0
+                };
+
                 image.put_pixel(j as u32, i as u32, Rgb([
                     max((closest.object.color.0 as f64 * lighting_coef) as u8, 10),
                     max((closest.object.color.1 as f64 * lighting_coef) as u8, 10),
