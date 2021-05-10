@@ -9,6 +9,7 @@ use image::{
 };
 use ray::Ray;
 use sphere::Sphere;
+use std::cmp::max;
 use std::fs::File;
 use vec3::Vec3;
 
@@ -17,18 +18,25 @@ const WIDTH: usize = 1920;
 const HEIGHT: usize = 1080;
 
 // Distance between the image plane and the vantage point.
-const VANTAGE_DISTANCE: f64 = 100.0;
+const VANTAGE_DISTANCE: f64 = 200.0;
 
 // Determines the quality of anti-aliasing.
 // TODO: Currently the scaling needs fixing.
 const AA_SCALE: usize = 1;
 
+struct Hit<'a> {
+    pos: Vec3,
+    object: &'a Sphere,
+}
+
 fn main() {
+    // Calculate the size of the ImageBuffer with respect to our anti-aliasing factor.
     let buffer_width = (WIDTH * AA_SCALE) as u32;
     let buffer_height = (HEIGHT * AA_SCALE) as u32;
     let mut image: RgbImage = ImageBuffer::new(buffer_width, buffer_height);
+
     let origin = Vec3::new(0.0, 0.0, VANTAGE_DISTANCE);
-    //let light = Vec3::new(0.0, 200.0, 50.0);
+    let light = Vec3::new(0.0, 200.0, 50.0);
     let scene_objects = vec![
         Sphere::new(Vec3::new(-200.0, 0.0, -25.0), 50),
         Sphere::new(Vec3::new(-100.0, 0.0, -25.0), 50),
@@ -53,7 +61,7 @@ fn main() {
             let mut hits = Vec::new();
             for object in scene_objects.iter() {
                 match object.intersection(&primary_ray) {
-                    Some(hit) => hits.push(hit),
+                    Some(pos) => hits.push(Hit { pos, object: &object }),
                     None => (),
                 }
             }
@@ -62,13 +70,17 @@ fn main() {
             if hits.len() > 0 {
                 let mut closest = &hits[0];
                 for hit in hits[1..].iter() {
-                    if origin.distance(hit) < origin.distance(&closest) {
+                    if origin.distance(&hit.pos) < origin.distance(&closest.pos) {
                         closest = hit;
                     }
                 }
-                
+
+                let surface_normal = closest.pos.minus(&closest.object.center).unit();
+                let lighting_coef = closest.pos.minus(&light).unit().dot(&surface_normal);
+
                 // TODO: Actually color based off of the object material.
-                image.put_pixel(j as u32, i as u32, Rgb([255, 255, 255]));
+                let saturation = max((255.0 * lighting_coef) as u8, 10);
+                image.put_pixel(j as u32, i as u32, Rgb([saturation, saturation, saturation]));
             }
         }
     }

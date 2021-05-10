@@ -2,8 +2,8 @@ use super::ray::Ray;
 use super::vec3::Vec3;
 
 pub struct Sphere {
-    center: Vec3,
-    radius: u32,
+    pub center: Vec3,
+    pub radius: u32,
 }
 
 impl Sphere {
