@@ -18,7 +18,7 @@ const WIDTH: usize = 1920;
 const HEIGHT: usize = 1080;
 
 // Distance between the image plane and the vantage point.
-const VANTAGE_DISTANCE: f64 = 200.0;
+const VANTAGE_DISTANCE: f64 = 1000.0;
 
 // Determines the quality of anti-aliasing.
 // TODO: Currently the scaling needs fixing.
@@ -43,13 +43,13 @@ fn main() {
     let mut image: RgbImage = ImageBuffer::new(buffer_width, buffer_height);
 
     let origin = Vec3::new(0.0, 0.0, VANTAGE_DISTANCE);
-    let light = Vec3::new(0.0, 200.0, 50.0);
+    let light = Vec3::new(0.0, -2000.0, -2000.0);
     let scene_objects = vec![
-        Sphere::new(Vec3::new(-200.0, 0.0, -25.0), 50, WHITE),
-        Sphere::new(Vec3::new(-100.0, 0.0, -25.0), 50, RED),
+        Sphere::new(Vec3::new(-300.0, 0.0, -25.0), 50, WHITE),
+        Sphere::new(Vec3::new(-150.0, 0.0, -25.0), 50, RED),
         Sphere::new(Vec3::new(0.0, 0.0, -25.0), 50, GREEN),
-        Sphere::new(Vec3::new(100.0, 0.0, -25.0), 50, BLUE),
-        Sphere::new(Vec3::new(200.0, 0.0, -25.0), 50, YELLOW),
+        Sphere::new(Vec3::new(150.0, 0.0, -25.0), 50, BLUE),
+        Sphere::new(Vec3::new(300.0, 0.0, -25.0), 50, YELLOW),
     ];
 
     for i in 0..buffer_height {
@@ -83,7 +83,7 @@ fn main() {
                 }
 
                 let surface_normal = closest.pos.minus(&closest.object.center).unit();
-                let lighting_coef = closest.pos.minus(&light).unit().dot(&surface_normal);
+                let lighting_coef = light.minus(&closest.pos).unit().dot(&surface_normal);
                 image.put_pixel(j as u32, i as u32, Rgb([
                     max((closest.object.color.0 as f64 * lighting_coef) as u8, 10),
                     max((closest.object.color.1 as f64 * lighting_coef) as u8, 10),
