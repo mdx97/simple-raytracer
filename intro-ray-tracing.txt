@@ -1,0 +1,81 @@
+scratchapixel - Intro to RayTracing
+
+==========
+Chapter 1
+==========
+Image Plane
+- A two dimensional surface upon which a three dimensional scene is projected.
+
+Photons
+-------
+- The appearance of an object in the scene is primarily a result of the material interacting with light.
+- Light is made up of photons, which are small particles emitted from various light sources.
+- The total of transmitted, reflected, and absorbed photons must be equivalent to the number of incoming photons.
+
+Materials
+---------
+Two types:
+    * Conductors
+        - Metals
+    * Dielectrics
+        - Glass
+        - Plastic
+        - Wood
+        - Water
+        - etc
+
+==========
+Chapter 2
+==========
+Forward Ray-Tracing (light tracing)
+- Follow the path of the photon FROM the light source TO the observer.
+- Not considered practical.
+
+Backward Ray-Tracing (eye tracing)
+- Follow the path of the photon FROM the observer TO the light source. 
+- Far more efficient than forward tracing.
+- (Primary, Visibility, or Camera) ray -> Object -> Shadow Ray -> Light source.
+
+==========
+Chapter 3 
+==========
+Backward Ray-Tracing Algorithm
+- For each pixel
+    * Shoot a ray from the eye to the center of the pixel (primary ray).
+    * Check that ray to see if it intersects any object in the scene.
+        - If multiple objects are interesected, choose the intersection closest to the camera.
+    * Shoot a ray from the intersection point to the light source.
+    * If the shadow ray intersects another object, the point is in shadow.
+        - If not, it is illuminated.
+
+==========
+Chapter 4 
+==========
+Reflection
+- Light bouncing off of an object.
+
+Refraction
+- Light changing direction when passing through a medium.
+
+How do we determine the ratio of reflection to refraction on a material that has both properties?
+- Fresnel equation.
+
+New ray types:
+- Reflection Ray: The ray that leaves an intersection point to determine the amount of reflective light coming in.
+- Transmission Ray: The ray that goes through a transparent surface.
+
+How to compute reflection color:
+- Use the primary ray direction and the surface normal direction to compute the reflection ray.
+- Check for intersections with the reflection ray.
+- Find where the reflection ray intersects and send a shadow ray to the light source.
+
+How to compute refraction color:
+- Use the primary ray direction, surface normal direction, and refractive index of the surface (some decimal modifier) to compute the trasmission ray.
+- Check for intersections with the transmission ray.
+- Find where the trasmission ray intersects and send a shadow ray to the light source.
+
+*Reflections and refractions can be mixed and chained... e.g. if a refraction ray intersections with a reflective surface, a new reflection ray will be cast from that intersection.
+
+^ This can result in infinite recursion. We need to set an arbitrary stop on the "depth" of each ray (aka the number of intersections that it is allowed to compute)
+
+
