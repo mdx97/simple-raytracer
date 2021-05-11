@@ -31,6 +31,10 @@ const GREEN: Color  = (0, 255, 0);
 const BLUE: Color   = (0, 0, 255);
 const YELLOW: Color = (255, 255, 0);
 
+// Controls the minimum level any red, green, or blue value can be.
+// NOTE: This is a temporary hack until global illumination is added.
+const MINIMUM_SATURATION: u8 = 20;
+
 struct Hit<'a> {
     pos: Vec3,
     object: &'a Sphere,
@@ -85,9 +89,9 @@ fn main() {
                 let surface_normal = closest.pos.minus(&closest.object.center).unit();
                 let lighting_coef = light.minus(&closest.pos).unit().dot(&surface_normal);
                 image.put_pixel(j as u32, i as u32, Rgb([
-                    max((closest.object.color.0 as f64 * lighting_coef) as u8, 10),
-                    max((closest.object.color.1 as f64 * lighting_coef) as u8, 10),
-                    max((closest.object.color.2 as f64 * lighting_coef) as u8, 10),
+                    max((closest.object.color.0 as f64 * lighting_coef) as u8, MINIMUM_SATURATION),
+                    max((closest.object.color.1 as f64 * lighting_coef) as u8, MINIMUM_SATURATION),
+                    max((closest.object.color.2 as f64 * lighting_coef) as u8, MINIMUM_SATURATION),
                 ]));
             }
         }
